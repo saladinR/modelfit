@@ -1,0 +1,7 @@
+{
+  "name": "NutriScan AI",
+  "description": "Application de suivi nutritionnel avec scan de repas par IA, calcul de besoins personnalisés et génération de plans alimentaires.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}

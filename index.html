@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
+    <meta name="theme-color" content="#000000" />
+    <meta name="description" content="Application intelligente pour scanner vos repas et générer des plans nutritionnels personnalisés avec l'IA Groq" />
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/manifest.json" />
+    
+    <!-- iOS specific -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="ModelFit" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'><rect fill='%23000' width='180' height='180' rx='40'/><text x='90' y='90' font-size='100' font-weight='bold' dominant-baseline='middle' text-anchor='middle' fill='white' font-family='Arial'>MF</text></svg>" />
+    
+    <!-- Standalone -->
+    <meta name="mobile-web-app-capable" content="yes" />
+    
+    <title>ModelFit - Nutrition & Plans Alimentaires</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+    
+    <!-- Service Worker Registration -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/sw.js')
+          .then(reg => console.log('Service Worker enregistré'))
+          .catch(err => console.log('Erreur Service Worker:', err));
+      }
+      
+      // Demander la permission de notification (optionnel)
+      if ('Notification' in window && Notification.permission === 'default') {
+        // Ne pas afficher automtiquement, laisser l'utilisateur choisir
+      }
+      
+      // Détecter si elle est installée comme PWA
+      let displayMode = 'browser tab';
+      if (window.matchMedia('(display-mode: standalone)').matches) {
+        displayMode = 'standalone app';
+      }
+      console.log('Mode affichage:', displayMode);
+    </script>
+  </body>
+</html>
+
+
