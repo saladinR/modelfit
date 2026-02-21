@@ -1,45 +1,5 @@
 {
-  "expo": {
-    "name": "ModelFit",
-    "slug": "modelfit",
-    "version": "1.0.0",
-    "orientation": "portrait",
-    "userInterfaceStyle": "light",
-    "entryPoint": "./index.js",
-    "updates": {
-      "fallbackToCacheTimeout": 0
-    },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
-    "ios": {
-      "supportsTabletMode": true,
-      "bundleIdentifier": "com.modelfit.app",
-      "buildNumber": "1"
-    },
-    "android": {
-      "package": "com.modelfit.app"
-    },
-    "plugins": [
-      [
-        "expo-camera",
-        {
-          "cameraPermission": "Nous avons besoin d'accès à la caméra pour scanner vos repas"
-        }
-      ],
-      [
-        "expo-location",
-        {
-          "locationAlwaysAndWhenInUsePermission": "Nous avons besoin de votre localisation"
-        }
-      ],
-      "expo-local-authentication"
-    ],
-    "extra": {
-      "eas": {
-        "projectId": "modelfit-ios"
-      }
-    },
-    "scheme": "modelfit"
-  }
+  "name": "ModelFit",
+  "description": "Application de nutrition avec IA Groq"
 }
+
