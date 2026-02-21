@@ -2,9 +2,6 @@
   "buildCommand": "npm run build",
   "devCommand": "npm run dev",
   "outputDirectory": "dist",
-  "env": [
-    "VITE_GROQ_API_KEY"
-  ],
   "headers": [
     {
       "source": "/manifest.json",
