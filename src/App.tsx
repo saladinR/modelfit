@@ -165,8 +165,8 @@ export default function App() {
     const targetMacros = calculateTargetMacros(targetTdee, targetProfile.goal);
 
     try {
-      const apiKey = profile.customApiKey || "";
-      if (!apiKey) throw new Error("Clé API Groq requise. Allez dans Profil → Configuration Groq → Entrez votre clé Groq.");
+      const apiKey = profile.customApiKey || import.meta.env.VITE_GROQ_API_KEY || "";
+      if (!apiKey) throw new Error("Clé API Groq requise. Allez dans Profil → Configuration Groq → Entrez votre clé Groq ou ajoutez là dans .env");
 
       // Calcul de la distribution des macros par repas
       const breakfastCals = Math.round(targetMacros.calories * 0.15);
@@ -469,8 +469,8 @@ function ScanPage({ onMealAdded, profile }: { onMealAdded: (meal: Meal) => void,
       const base64 = image.base64String;
 
       try {
-        const apiKey = profile.customApiKey || "";
-        if (!apiKey) throw new Error("Clé API Groq requise. Allez dans Profil → Configuration Groq → Entrez votre clé Groq.");
+        const apiKey = profile.customApiKey || import.meta.env.VITE_GROQ_API_KEY || "";
+        if (!apiKey) throw new Error("Clé API Groq requise. Allez dans Profil → Configuration Groq → Entrez votre clé Groq ou ajoutez là dans .env");
 
         const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
           method: "POST",
