@@ -1,15 +1,14 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { 
-  Home, 
-  Camera, 
-  Calendar, 
-  ShoppingCart, 
-  User, 
-  Plus, 
-  ChevronRight, 
-  Target, 
-  Flame, 
-  Dna, 
+import {
+  Home,
+  Camera as CameraIcon,
+  Calendar,
+  ShoppingCart,
+  User,
+  Plus,
+  ChevronRight,
+  Target,
+  Flame,
+  Dna,
   Droplets,
   Settings,
   LogOut,
@@ -19,17 +18,18 @@ import {
   X
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import { 
-  PieChart, 
-  Pie, 
-  Cell, 
-  ResponsiveContainer, 
-  BarChart, 
-  Bar, 
-  XAxis, 
-  YAxis, 
-  Tooltip as RechartsTooltip 
+import {
+  PieChart,
+  Pie,
+  Cell,
+  ResponsiveContainer,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip as RechartsTooltip
 } from 'recharts';
+import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 import { cn, calculateBMR, calculateTDEE, calculateTargetMacros } from './utils';
 import { Goal, ActivityLevel, type UserProfile, type Meal, type Nutrients, MEAL_SCAN_SCHEMA, PLAN_GENERATION_SCHEMA } from './types';
 
@@ -50,7 +50,7 @@ const COLORS = ['#10b981', '#3b82f6', '#f59e0b', '#ef4444'];
 const BottomNav = ({ activeTab, setActiveTab }: { activeTab: string, setActiveTab: (tab: string) => void }) => {
   const tabs = [
     { id: 'home', icon: Home, label: 'Accueil' },
-    { id: 'scan', icon: Camera, label: 'Scanner' },
+    { id: 'scan', icon: CameraIcon, label: 'Scanner' },
     { id: 'calc', icon: Target, label: 'Besoins' },
     { id: 'plan', icon: Calendar, label: 'Plan' },
     { id: 'profile', icon: Settings, label: 'Profil' },
@@ -70,7 +70,7 @@ const BottomNav = ({ activeTab, setActiveTab }: { activeTab: string, setActiveTa
           <tab.icon size={24} />
           <span className="text-[10px] font-medium">{tab.label}</span>
           {activeTab === tab.id && (
-            <motion.div 
+            <motion.div
               layoutId="nav-indicator"
               className="absolute -top-2 w-1 h-1 bg-emerald-600 rounded-full"
             />
@@ -96,7 +96,7 @@ const ProgressBar = ({ current, target, color, label }: { current: number, targe
         <span className="text-gray-900">{current} / {target}g</span>
       </div>
       <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
-        <motion.div 
+        <motion.div
           initial={{ width: 0 }}
           animate={{ width: `${percentage}%` }}
           className={cn("h-full rounded-full", color)}
@@ -142,9 +142,9 @@ export default function App() {
   const todayMeals = meals.filter(m => {
     const d = new Date(m.timestamp);
     const today = new Date();
-    return d.getDate() === today.getDate() && 
-           d.getMonth() === today.getMonth() && 
-           d.getFullYear() === today.getFullYear();
+    return d.getDate() === today.getDate() &&
+      d.getMonth() === today.getMonth() &&
+      d.getFullYear() === today.getFullYear();
   });
 
   const totals = todayMeals.reduce((acc, m) => ({
@@ -166,7 +166,7 @@ export default function App() {
     try {
       const apiKey = profile.customApiKey || "";
       if (!apiKey) throw new Error("Clé API Groq requise. Allez dans Profil → Configuration Groq → Entrez votre clé Groq.");
-      
+
       // Calcul de la distribution des macros par repas
       const breakfastCals = Math.round(targetMacros.calories * 0.15);
       const lunchCals = Math.round(targetMacros.calories * 0.40);
@@ -291,21 +291,21 @@ IMPORTANT: Propose des aliments RÉALISTES avec des portions PRÉCISES. Chaque r
 
       const data = await response.json();
       const text = data.choices[0]?.message?.content || '{}';
-      
+
       // Extraire le JSON de la réponse (peut contenir du markdown ou du texte)
       let jsonStr = text;
-      
+
       // Chercher le premier { et le dernier }
       const startIdx = jsonStr.indexOf('{');
       const endIdx = jsonStr.lastIndexOf('}');
-      
+
       if (startIdx !== -1 && endIdx !== -1 && endIdx > startIdx) {
         jsonStr = jsonStr.substring(startIdx, endIdx + 1);
       }
-      
+
       // Nettoyer les guillemets mal échappés
       jsonStr = jsonStr.replace(/\\'/g, "'").replace(/\n/g, " ");
-      
+
       const planData = JSON.parse(jsonStr);
       setDailyPlan(planData);
       return planData;
@@ -322,7 +322,7 @@ IMPORTANT: Propose des aliments RÉALISTES avec des portions PRÉCISES. Chaque r
       <div className="max-w-md mx-auto px-5 pt-8">
         <AnimatePresence mode="wait">
           {activeTab === 'home' && (
-            <motion.div 
+            <motion.div
               key="home"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -350,7 +350,7 @@ IMPORTANT: Propose des aliments RÉALISTES avec des portions PRÉCISES. Chaque r
                   </div>
                 </div>
                 <div className="h-3 bg-white/20 rounded-full overflow-hidden">
-                  <motion.div 
+                  <motion.div
                     initial={{ width: 0 }}
                     animate={{ width: `${Math.min((totals.calories / targets.calories) * 100, 100)}%` }}
                     className="h-full bg-white rounded-full"
@@ -379,7 +379,7 @@ IMPORTANT: Propose des aliments RÉALISTES avec des portions PRÉCISES. Chaque r
                 {todayMeals.length === 0 ? (
                   <div className="text-center py-10 bg-white rounded-3xl border border-dashed border-gray-200">
                     <p className="text-gray-400 text-sm">Aucun repas scanné aujourd'hui</p>
-                    <button 
+                    <button
                       onClick={() => setActiveTab('scan')}
                       className="mt-3 px-4 py-2 bg-emerald-50 text-emerald-600 rounded-full text-xs font-bold"
                     >
@@ -411,9 +411,9 @@ IMPORTANT: Propose des aliments RÉALISTES avec des portions PRÉCISES. Chaque r
           )}
 
           {activeTab === 'calc' && (
-            <CalculatorPage 
-              profile={profile} 
-              setProfile={setProfile} 
+            <CalculatorPage
+              profile={profile}
+              setProfile={setProfile}
               generatePlan={generatePlan}
               isGenerating={isGeneratingPlan}
               setActiveTab={setActiveTab}
@@ -421,9 +421,9 @@ IMPORTANT: Propose des aliments RÉALISTES avec des portions PRÉCISES. Chaque r
           )}
 
           {activeTab === 'plan' && (
-            <PlanPage 
-              dailyPlan={dailyPlan} 
-              profile={profile} 
+            <PlanPage
+              dailyPlan={dailyPlan}
+              profile={profile}
               generatePlan={generatePlan}
               isGenerating={isGeneratingPlan}
             />
@@ -450,14 +450,22 @@ function ScanPage({ onMealAdded, profile }: { onMealAdded: (meal: Meal) => void,
   const [isScanning, setIsScanning] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [result, setResult] = useState<any>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleScan = async (file: File) => {
-    setIsScanning(true);
-    const reader = new FileReader();
-    reader.onloadend = async () => {
-      const base64 = (reader.result as string).split(',')[1];
-      setPreviewUrl(reader.result as string);
+  const handleScan = async () => {
+    try {
+      const image = await Camera.getPhoto({
+        quality: 80,
+        allowEditing: false,
+        resultType: CameraResultType.Base64,
+        source: CameraSource.Prompt
+      });
+
+      if (!image.base64String) return;
+
+      setIsScanning(true);
+      const dataUrl = `data:image/${image.format};base64,${image.base64String}`;
+      setPreviewUrl(dataUrl);
+      const base64 = image.base64String;
 
       try {
         const apiKey = profile.customApiKey || "";
@@ -500,16 +508,16 @@ Données image base64: ${base64.substring(0, 100)}...`
 
         const data = await response.json();
         const text = data.choices[0]?.message?.content || '{}';
-        
+
         // Extraire et nettoyer le JSON
         let jsonStr = text;
         const startIdx = jsonStr.indexOf('{');
         const endIdx = jsonStr.lastIndexOf('}');
-        
+
         if (startIdx !== -1 && endIdx !== -1 && endIdx > startIdx) {
           jsonStr = jsonStr.substring(startIdx, endIdx + 1);
         }
-        
+
         jsonStr = jsonStr.replace(/\\'/g, "'").replace(/\n/g, " ");
         const result = JSON.parse(jsonStr);
         setResult(result);
@@ -519,8 +527,9 @@ Données image base64: ${base64.substring(0, 100)}...`
       } finally {
         setIsScanning(false);
       }
-    };
-    reader.readAsDataURL(file);
+    } catch (e) {
+      console.error("Camera error:", e);
+    }
   };
 
   const confirmMeal = () => {
@@ -543,7 +552,7 @@ Données image base64: ${base64.substring(0, 100)}...`
   };
 
   return (
-    <motion.div 
+    <motion.div
       key="scan"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
@@ -563,22 +572,14 @@ Données image base64: ${base64.substring(0, 100)}...`
       </header>
 
       {!previewUrl ? (
-        <div 
-          onClick={() => fileInputRef.current?.click()}
+        <div
+          onClick={handleScan}
           className="aspect-square w-full bg-white rounded-3xl border-2 border-dashed border-gray-200 flex flex-col items-center justify-center gap-4 cursor-pointer hover:bg-gray-50 transition-colors"
         >
           <div className="w-16 h-16 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-600">
-            <Camera size={32} />
+            <CameraIcon size={32} />
           </div>
           <p className="text-sm font-medium text-gray-500">Appuyez pour prendre une photo</p>
-          <input 
-            type="file" 
-            ref={fileInputRef} 
-            className="hidden" 
-            accept="image/*" 
-            capture="environment"
-            onChange={(e) => e.target.files?.[0] && handleScan(e.target.files[0])}
-          />
         </div>
       ) : (
         <div className="space-y-6">
@@ -593,7 +594,7 @@ Données image base64: ${base64.substring(0, 100)}...`
           </div>
 
           {result && (
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               className="space-y-4"
@@ -621,13 +622,13 @@ Données image base64: ${base64.substring(0, 100)}...`
               </Card>
 
               <div className="flex gap-3">
-                <button 
+                <button
                   onClick={() => { setPreviewUrl(null); setResult(null); }}
                   className="flex-1 py-4 bg-gray-100 text-gray-600 rounded-2xl font-bold"
                 >
                   Annuler
                 </button>
-                <button 
+                <button
                   onClick={confirmMeal}
                   className="flex-[2] py-4 bg-emerald-600 text-white rounded-2xl font-bold shadow-lg shadow-emerald-200"
                 >
@@ -644,7 +645,7 @@ Données image base64: ${base64.substring(0, 100)}...`
 
 function PlanPage({ dailyPlan, profile, generatePlan, isGenerating }: { dailyPlan: any, profile: UserProfile, generatePlan: () => void, isGenerating: boolean }) {
   return (
-    <motion.div 
+    <motion.div
       key="plan"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
@@ -662,7 +663,7 @@ function PlanPage({ dailyPlan, profile, generatePlan, isGenerating }: { dailyPla
               Custom AI
             </div>
           )}
-          <button 
+          <button
             onClick={() => generatePlan()}
             disabled={isGenerating}
             className="p-2 bg-emerald-50 text-emerald-600 rounded-xl disabled:opacity-50"
@@ -676,7 +677,7 @@ function PlanPage({ dailyPlan, profile, generatePlan, isGenerating }: { dailyPla
         <div className="text-center py-20 bg-white rounded-3xl border border-dashed border-gray-200">
           <Calendar size={48} className="mx-auto text-gray-200 mb-4" />
           <p className="text-gray-400 text-sm mb-6">Aucun plan généré pour le moment</p>
-          <button 
+          <button
             onClick={() => generatePlan()}
             disabled={isGenerating}
             className="px-8 py-3 bg-emerald-600 text-white rounded-2xl font-bold shadow-lg shadow-emerald-100 flex items-center gap-2 mx-auto"
@@ -696,7 +697,7 @@ function PlanPage({ dailyPlan, profile, generatePlan, isGenerating }: { dailyPla
             <MealItem title="Déjeuner" description={dailyPlan.lunch} />
             <MealItem title="Dîner" description={dailyPlan.dinner} />
             {dailyPlan.snacks?.map((snack: any, i: number) => (
-              <MealItem key={i} title={`Collation ${i+1}`} description={snack} />
+              <MealItem key={i} title={`Collation ${i + 1}`} description={snack} />
             ))}
           </div>
         </div>
@@ -759,7 +760,7 @@ function GroceryPage({ dailyPlan }: { dailyPlan: any }) {
   }
 
   return (
-    <motion.div 
+    <motion.div
       key="grocery"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
@@ -772,8 +773,8 @@ function GroceryPage({ dailyPlan }: { dailyPlan: any }) {
 
       <div className="bg-white rounded-3xl p-2 shadow-sm border border-gray-50">
         {dailyPlan.groceryList?.map((item: string, i: number) => (
-          <div 
-            key={i} 
+          <div
+            key={i}
             onClick={() => setChecked(prev => ({ ...prev, [item]: !prev[item] }))}
             className={cn(
               "flex items-center gap-4 p-4 rounded-2xl transition-colors cursor-pointer",
@@ -810,7 +811,7 @@ function ProfilePage({ profile, setProfile }: { profile: UserProfile, setProfile
   };
 
   return (
-    <motion.div 
+    <motion.div
       key="profile"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
@@ -818,7 +819,7 @@ function ProfilePage({ profile, setProfile }: { profile: UserProfile, setProfile
     >
       <header className="flex justify-between items-center">
         <h1 className="text-2xl font-bold">Profil & Paramètres</h1>
-        <button 
+        <button
           onClick={() => isEditing ? save() : setIsEditing(true)}
           className="text-emerald-600 font-bold text-sm"
         >
@@ -839,10 +840,10 @@ function ProfilePage({ profile, setProfile }: { profile: UserProfile, setProfile
           </div>
 
           <div className="space-y-4">
-            <ProfileField 
-              label="Objectif" 
+            <ProfileField
+              label="Objectif"
               value={isEditing ? (
-                <select 
+                <select
                   className="bg-gray-50 border-none rounded-lg p-1 text-sm outline-none"
                   value={tempProfile.goal}
                   onChange={(e) => setTempProfile({ ...tempProfile, goal: e.target.value as Goal })}
@@ -851,12 +852,12 @@ function ProfilePage({ profile, setProfile }: { profile: UserProfile, setProfile
                   <option value={Goal.CUTTING}>Sèche</option>
                   <option value={Goal.MAINTENANCE}>Maintien</option>
                 </select>
-              ) : (profile.goal === 'MASS' ? 'Prise de masse' : profile.goal === 'CUTTING' ? 'Sèche' : 'Maintien')} 
+              ) : (profile.goal === 'MASS' ? 'Prise de masse' : profile.goal === 'CUTTING' ? 'Sèche' : 'Maintien')}
             />
-            <ProfileField 
-              label="Activité" 
+            <ProfileField
+              label="Activité"
               value={isEditing ? (
-                <select 
+                <select
                   className="bg-gray-50 border-none rounded-lg p-1 text-sm outline-none"
                   value={tempProfile.activityLevel}
                   onChange={(e) => setTempProfile({ ...tempProfile, activityLevel: e.target.value as ActivityLevel })}
@@ -867,18 +868,18 @@ function ProfilePage({ profile, setProfile }: { profile: UserProfile, setProfile
                   <option value={ActivityLevel.ACTIVE}>Actif</option>
                   <option value={ActivityLevel.VERY_ACTIVE}>Très actif</option>
                 </select>
-              ) : profile.activityLevel} 
+              ) : profile.activityLevel}
             />
-            <ProfileField 
-              label="Poids (kg)" 
+            <ProfileField
+              label="Poids (kg)"
               value={isEditing ? (
-                <input 
-                  type="number" 
+                <input
+                  type="number"
                   className="bg-gray-50 border-none rounded-lg p-1 text-sm outline-none w-16 text-right"
                   value={tempProfile.weight}
                   onChange={(e) => setTempProfile({ ...tempProfile, weight: Number(e.target.value) })}
                 />
-              ) : profile.weight} 
+              ) : profile.weight}
             />
           </div>
         </Card>
@@ -891,7 +892,7 @@ function ProfilePage({ profile, setProfile }: { profile: UserProfile, setProfile
           <div className="space-y-3">
             <div className="space-y-1.5">
               <label className="text-[10px] text-gray-400 font-bold uppercase">Clé API</label>
-              <input 
+              <input
                 type="text"
                 placeholder="Entrez votre clé API..."
                 className="w-full bg-gray-50 border-none rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-emerald-500/20"
@@ -902,7 +903,7 @@ function ProfilePage({ profile, setProfile }: { profile: UserProfile, setProfile
 
             <div className="space-y-1.5">
               <label className="text-[10px] text-gray-400 font-bold uppercase">Modèle (ex: gemini-2.0-flash)</label>
-              <input 
+              <input
                 type="text"
                 placeholder="gemini-3-flash-preview"
                 className="w-full bg-gray-50 border-none rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-emerald-500/20"
@@ -913,7 +914,7 @@ function ProfilePage({ profile, setProfile }: { profile: UserProfile, setProfile
 
             <div className="space-y-1.5">
               <label className="text-[10px] text-gray-400 font-bold uppercase">Base URL (Optionnel)</label>
-              <input 
+              <input
                 type="text"
                 placeholder="https://generativelanguage.googleapis.com"
                 className="w-full bg-gray-50 border-none rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-emerald-500/20"
@@ -922,22 +923,22 @@ function ProfilePage({ profile, setProfile }: { profile: UserProfile, setProfile
               />
             </div>
 
-            {(tempProfile.customApiKey !== profile.customApiKey || 
-              tempProfile.customModel !== profile.customModel || 
+            {(tempProfile.customApiKey !== profile.customApiKey ||
+              tempProfile.customModel !== profile.customModel ||
               tempProfile.customBaseUrl !== profile.customBaseUrl) && (
-              <button 
-                onClick={() => setProfile({ 
-                  ...profile, 
-                  customApiKey: tempProfile.customApiKey,
-                  customModel: tempProfile.customModel,
-                  customBaseUrl: tempProfile.customBaseUrl
-                })}
-                className="w-full py-3 bg-emerald-600 text-white rounded-xl text-xs font-bold shadow-sm"
-              >
-                Enregistrer la configuration IA
-              </button>
-            )}
-            
+                <button
+                  onClick={() => setProfile({
+                    ...profile,
+                    customApiKey: tempProfile.customApiKey,
+                    customModel: tempProfile.customModel,
+                    customBaseUrl: tempProfile.customBaseUrl
+                  })}
+                  className="w-full py-3 bg-emerald-600 text-white rounded-xl text-xs font-bold shadow-sm"
+                >
+                  Enregistrer la configuration IA
+                </button>
+              )}
+
             <div className="flex items-center gap-2 pt-2">
               <div className={cn(
                 "w-2 h-2 rounded-full",
@@ -968,7 +969,7 @@ const ProfileField = ({ label, value }: { label: string, value: React.ReactNode 
 
 function CalculatorPage({ profile, setProfile, generatePlan, isGenerating, setActiveTab }: { profile: UserProfile, setProfile: (p: UserProfile) => void, generatePlan: (p: UserProfile) => Promise<any>, isGenerating: boolean, setActiveTab: (t: string) => void }) {
   const [tempProfile, setTempProfile] = useState(profile);
-  
+
   const bmr = calculateBMR(tempProfile.weight, tempProfile.height, tempProfile.age, tempProfile.gender);
   const tdee = calculateTDEE(bmr, tempProfile.activityLevel);
   const targets = calculateTargetMacros(tdee, tempProfile.goal);
@@ -982,7 +983,7 @@ function CalculatorPage({ profile, setProfile, generatePlan, isGenerating, setAc
   };
 
   return (
-    <motion.div 
+    <motion.div
       key="calc"
       initial={{ opacity: 0, x: 20 }}
       animate={{ opacity: 1, x: 0 }}
@@ -998,14 +999,14 @@ function CalculatorPage({ profile, setProfile, generatePlan, isGenerating, setAc
           <div className="space-y-2">
             <label className="text-xs font-bold text-gray-400 uppercase">Sexe</label>
             <div className="flex bg-gray-100 rounded-xl p-1">
-              <button 
-                onClick={() => setTempProfile({...tempProfile, gender: 'male'})}
+              <button
+                onClick={() => setTempProfile({ ...tempProfile, gender: 'male' })}
                 className={cn("flex-1 py-2 text-sm font-bold rounded-lg transition-all", tempProfile.gender === 'male' ? "bg-white shadow-sm text-emerald-600" : "text-gray-500")}
               >
                 Homme
               </button>
-              <button 
-                onClick={() => setTempProfile({...tempProfile, gender: 'female'})}
+              <button
+                onClick={() => setTempProfile({ ...tempProfile, gender: 'female' })}
                 className={cn("flex-1 py-2 text-sm font-bold rounded-lg transition-all", tempProfile.gender === 'female' ? "bg-white shadow-sm text-emerald-600" : "text-gray-500")}
               >
                 Femme
@@ -1014,11 +1015,11 @@ function CalculatorPage({ profile, setProfile, generatePlan, isGenerating, setAc
           </div>
           <div className="space-y-2">
             <label className="text-xs font-bold text-gray-400 uppercase">Âge</label>
-            <input 
-              type="number" 
+            <input
+              type="number"
               className="w-full bg-gray-100 rounded-xl p-3 text-sm font-bold outline-none focus:ring-2 focus:ring-emerald-500/20"
               value={tempProfile.age}
-              onChange={(e) => setTempProfile({...tempProfile, age: Number(e.target.value)})}
+              onChange={(e) => setTempProfile({ ...tempProfile, age: Number(e.target.value) })}
             />
           </div>
         </div>
@@ -1026,30 +1027,30 @@ function CalculatorPage({ profile, setProfile, generatePlan, isGenerating, setAc
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
             <label className="text-xs font-bold text-gray-400 uppercase">Poids (kg)</label>
-            <input 
-              type="number" 
+            <input
+              type="number"
               className="w-full bg-gray-100 rounded-xl p-3 text-sm font-bold outline-none focus:ring-2 focus:ring-emerald-500/20"
               value={tempProfile.weight}
-              onChange={(e) => setTempProfile({...tempProfile, weight: Number(e.target.value)})}
+              onChange={(e) => setTempProfile({ ...tempProfile, weight: Number(e.target.value) })}
             />
           </div>
           <div className="space-y-2">
             <label className="text-xs font-bold text-gray-400 uppercase">Taille (cm)</label>
-            <input 
-              type="number" 
+            <input
+              type="number"
               className="w-full bg-gray-100 rounded-xl p-3 text-sm font-bold outline-none focus:ring-2 focus:ring-emerald-500/20"
               value={tempProfile.height}
-              onChange={(e) => setTempProfile({...tempProfile, height: Number(e.target.value)})}
+              onChange={(e) => setTempProfile({ ...tempProfile, height: Number(e.target.value) })}
             />
           </div>
         </div>
 
         <div className="space-y-2">
           <label className="text-xs font-bold text-gray-400 uppercase">Niveau d'activité / Entraînement</label>
-          <select 
+          <select
             className="w-full bg-gray-100 rounded-xl p-3 text-sm font-bold outline-none focus:ring-2 focus:ring-emerald-500/20 appearance-none"
             value={tempProfile.activityLevel}
-            onChange={(e) => setTempProfile({...tempProfile, activityLevel: e.target.value as ActivityLevel})}
+            onChange={(e) => setTempProfile({ ...tempProfile, activityLevel: e.target.value as ActivityLevel })}
           >
             <option value={ActivityLevel.SEDENTARY}>Sédentaire (Bureau, peu d'exercice)</option>
             <option value={ActivityLevel.LIGHT}>Léger (1-2 jours d'entraînement)</option>
@@ -1069,7 +1070,7 @@ function CalculatorPage({ profile, setProfile, generatePlan, isGenerating, setAc
             ].map((g) => (
               <button
                 key={g.id}
-                onClick={() => setTempProfile({...tempProfile, goal: g.id})}
+                onClick={() => setTempProfile({ ...tempProfile, goal: g.id })}
                 className={cn(
                   "flex flex-col items-center gap-2 p-3 rounded-2xl border-2 transition-all",
                   tempProfile.goal === g.id ? "border-emerald-500 bg-emerald-50 text-emerald-700" : "border-gray-100 text-gray-400"
@@ -1095,7 +1096,7 @@ function CalculatorPage({ profile, setProfile, generatePlan, isGenerating, setAc
             <p className="text-xs opacity-70">Cible Objectif</p>
           </div>
         </div>
-        
+
         <div className="grid grid-cols-3 gap-2 pt-2 border-t border-white/10">
           <div className="text-center">
             <p className="text-[10px] opacity-70 uppercase font-bold">Prot</p>
@@ -1112,7 +1113,7 @@ function CalculatorPage({ profile, setProfile, generatePlan, isGenerating, setAc
         </div>
       </Card>
 
-      <button 
+      <button
         onClick={handleSave}
         disabled={isGenerating}
         className="w-full py-4 bg-emerald-600 text-white rounded-2xl font-bold shadow-lg shadow-emerald-100 flex items-center justify-center gap-2"
