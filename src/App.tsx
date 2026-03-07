@@ -479,22 +479,22 @@ function ScanPage({ onMealAdded, profile }: { onMealAdded: (meal: Meal) => void,
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            model: profile.customModel || "llama-3.3-70b-versatile",
+            model: "llama-3.2-11b-vision-preview",
             messages: [
               {
                 role: "user",
-                content: `Tu es un expert en nutrition. Analyse ce repas et fournis des estimations nutritionnelles précises en format JSON valide UNIQUEMENT.
-
-IMPORTANT: Réponds UNIQUEMENT avec du JSON valide, pas de markdown, pas de texte supplémentaire. Utilise cette structure exacte:
-{
-  "name": "nom du repas ou description",
-  "calories": nombre_de_calories,
-  "protein": grammes_de_proteines_nombre,
-  "carbs": grammes_de_glucides_nombre,
-  "fat": grammes_de_lipides_nombre
-}
-
-Données image base64: ${base64.substring(0, 100)}...`
+                content: [
+                  {
+                    type: "text",
+                    text: `Tu es un expert en nutrition. Analyse ce repas et fournis des estimations nutritionnelles précises en format JSON valide UNIQUEMENT.\n\nIMPORTANT: Réponds UNIQUEMENT avec du JSON valide, pas de markdown, pas de texte supplémentaire. Utilise cette structure exacte:\n{\n  "name": "nom du repas ou description",\n  "calories": nombre_de_calories,\n  "protein": grammes_de_proteines_nombre,\n  "carbs": grammes_de_glucides_nombre,\n  "fat": grammes_de_lipides_nombre\n}`
+                  },
+                  {
+                    type: "image_url",
+                    image_url: {
+                      url: `data:image/${image.format};base64,${base64}`
+                    }
+                  }
+                ]
               }
             ],
             temperature: 0.3,
