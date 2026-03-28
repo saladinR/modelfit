@@ -455,7 +455,12 @@ IMPORTANT: Propose des aliments RÉALISTES avec des portions PRÉCISES. Chaque r
                           <h4 className="font-bold text-sm">{meal.name}</h4>
                           <p className="text-xs text-gray-500">{meal.nutrients.calories} kcal • {meal.nutrients.protein}g P</p>
                         </div>
-                        <ChevronRight size={16} className="text-gray-300" />
+                        <button
+                          onClick={() => setMeals(meals.filter(m => m.id !== meal.id))}
+                          className="w-8 h-8 flex items-center justify-center rounded-full bg-red-50 text-red-400 hover:bg-red-100 transition-colors"
+                        >
+                          <X size={14} />
+                        </button>
                       </div>
                     ))}
                   </div>
@@ -936,6 +941,7 @@ function ProfilePage({ profile, setProfile }: { profile: UserProfile, setProfile
                   type="number"
                   className="bg-gray-50 border-none rounded-lg p-1 text-sm outline-none w-16 text-right"
                   value={tempProfile.weight}
+                  onFocus={(e) => e.target.select()}
                   onChange={(e) => setTempProfile({ ...tempProfile, weight: Number(e.target.value) })}
                 />
               ) : profile.weight}
@@ -1078,6 +1084,7 @@ function CalculatorPage({ profile, setProfile, generatePlan, isGenerating, setAc
               type="number"
               className="w-full bg-gray-100 rounded-xl p-3 text-sm font-bold outline-none focus:ring-2 focus:ring-emerald-500/20"
               value={tempProfile.age}
+              onFocus={(e) => e.target.select()}
               onChange={(e) => setTempProfile({ ...tempProfile, age: Number(e.target.value) })}
             />
           </div>
@@ -1090,6 +1097,7 @@ function CalculatorPage({ profile, setProfile, generatePlan, isGenerating, setAc
               type="number"
               className="w-full bg-gray-100 rounded-xl p-3 text-sm font-bold outline-none focus:ring-2 focus:ring-emerald-500/20"
               value={tempProfile.weight}
+              onFocus={(e) => e.target.select()}
               onChange={(e) => setTempProfile({ ...tempProfile, weight: Number(e.target.value) })}
             />
           </div>
@@ -1099,6 +1107,7 @@ function CalculatorPage({ profile, setProfile, generatePlan, isGenerating, setAc
               type="number"
               className="w-full bg-gray-100 rounded-xl p-3 text-sm font-bold outline-none focus:ring-2 focus:ring-emerald-500/20"
               value={tempProfile.height}
+              onFocus={(e) => e.target.select()}
               onChange={(e) => setTempProfile({ ...tempProfile, height: Number(e.target.value) })}
             />
           </div>
