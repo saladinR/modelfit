@@ -107,9 +107,62 @@ const ProgressBar = ({ current, target, color, label }: { current: number, targe
   );
 };
 
+// --- Splash Screen ---
+
+const SplashScreen = ({ onDone }: { onDone: () => void }) => {
+  useEffect(() => {
+    const timer = setTimeout(onDone, 2500);
+    return () => clearTimeout(timer);
+  }, [onDone]);
+
+  return (
+    <motion.div
+      className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-black"
+      initial={{ opacity: 1 }}
+      exit={{ opacity: 0, scale: 1.05 }}
+      transition={{ duration: 0.6, ease: 'easeInOut' }}
+    >
+      <motion.div
+        initial={{ opacity: 0, scale: 0.8 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.6, ease: 'easeOut' }}
+        className="flex flex-col items-center gap-4"
+      >
+        {/* Logo Icon */}
+        <div className="w-24 h-24 rounded-3xl bg-emerald-500 flex items-center justify-center shadow-lg shadow-emerald-500/40">
+          <svg width="52" height="52" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="2" y="22" width="8" height="8" rx="2" fill="white"/>
+            <rect x="42" y="22" width="8" height="8" rx="2" fill="white"/>
+            <rect x="10" y="18" width="6" height="16" rx="3" fill="white"/>
+            <rect x="36" y="18" width="6" height="16" rx="3" fill="white"/>
+            <rect x="16" y="24" width="20" height="4" rx="2" fill="white"/>
+          </svg>
+        </div>
+
+        {/* Brand Name */}
+        <div className="text-center">
+          <h1 className="text-4xl font-black text-white tracking-widest uppercase">BATAL PRO</h1>
+          <p className="text-emerald-400 text-sm font-medium tracking-wider mt-1">Nutrition & Performance</p>
+        </div>
+      </motion.div>
+
+      {/* Loading bar */}
+      <div className="absolute bottom-16 w-32 h-1 bg-white/10 rounded-full overflow-hidden">
+        <motion.div
+          className="h-full bg-emerald-400 rounded-full"
+          initial={{ width: '0%' }}
+          animate={{ width: '100%' }}
+          transition={{ duration: 2.2, ease: 'easeInOut' }}
+        />
+      </div>
+    </motion.div>
+  );
+};
+
 // --- Main App ---
 
 export default function App() {
+  const [showSplash, setShowSplash] = useState(true);
   const [activeTab, setActiveTab] = useState('home');
   const [profile, setProfile] = useState<UserProfile>(() => {
     const saved = localStorage.getItem('nutriscan_profile');
@@ -319,6 +372,10 @@ IMPORTANT: Propose des aliments RÉALISTES avec des portions PRÉCISES. Chaque r
   };
 
   return (
+    <>
+      <AnimatePresence>
+        {showSplash && <SplashScreen onDone={() => setShowSplash(false)} />}
+      </AnimatePresence>
     <div className="min-h-screen bg-[#F8F9FA] text-gray-900 font-sans pb-24">
       <div className="max-w-md mx-auto px-5 pt-8">
         <AnimatePresence mode="wait">
@@ -442,6 +499,7 @@ IMPORTANT: Propose des aliments RÉALISTES avec des portions PRÉCISES. Chaque r
 
       <BottomNav activeTab={activeTab} setActiveTab={setActiveTab} />
     </div>
+    </>
   );
 }
 

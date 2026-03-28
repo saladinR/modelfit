@@ -1,7 +1,7 @@
 // Service Worker pour ModelFit PWA
 // Gère le cache et le fonctionnement hors-ligne
 
-const CACHE_NAME = 'modelfit-v1';
+const CACHE_NAME = 'modelfit-v2';
 const urlsToCache = [
   '/',
   '/index.html',
