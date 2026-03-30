@@ -182,7 +182,8 @@ export default function App() {
   }, [profile]);
 
   useEffect(() => {
-    localStorage.setItem('nutriscan_meals', JSON.stringify(meals));
+    const toSave = meals.map(({ imageUrl: _img, ...rest }) => rest);
+    localStorage.setItem('nutriscan_meals', JSON.stringify(toSave));
   }, [meals]);
 
   useEffect(() => {
@@ -940,9 +941,9 @@ function ProfilePage({ profile, setProfile }: { profile: UserProfile, setProfile
                 <input
                   type="number"
                   className="bg-gray-50 border-none rounded-lg p-1 text-sm outline-none w-16 text-right"
-                  value={tempProfile.weight}
+                  value={tempProfile.weight || ''}
                   onFocus={(e) => e.target.select()}
-                  onChange={(e) => setTempProfile({ ...tempProfile, weight: Number(e.target.value) })}
+                  onChange={(e) => setTempProfile({ ...tempProfile, weight: e.target.value === '' ? 0 : Number(e.target.value) })}
                 />
               ) : profile.weight}
             />
@@ -1083,9 +1084,9 @@ function CalculatorPage({ profile, setProfile, generatePlan, isGenerating, setAc
             <input
               type="number"
               className="w-full bg-gray-100 rounded-xl p-3 text-sm font-bold outline-none focus:ring-2 focus:ring-emerald-500/20"
-              value={tempProfile.age}
+              value={tempProfile.age || ''}
               onFocus={(e) => e.target.select()}
-              onChange={(e) => setTempProfile({ ...tempProfile, age: Number(e.target.value) })}
+              onChange={(e) => setTempProfile({ ...tempProfile, age: e.target.value === '' ? 0 : Number(e.target.value) })}
             />
           </div>
         </div>
@@ -1096,9 +1097,9 @@ function CalculatorPage({ profile, setProfile, generatePlan, isGenerating, setAc
             <input
               type="number"
               className="w-full bg-gray-100 rounded-xl p-3 text-sm font-bold outline-none focus:ring-2 focus:ring-emerald-500/20"
-              value={tempProfile.weight}
+              value={tempProfile.weight || ''}
               onFocus={(e) => e.target.select()}
-              onChange={(e) => setTempProfile({ ...tempProfile, weight: Number(e.target.value) })}
+              onChange={(e) => setTempProfile({ ...tempProfile, weight: e.target.value === '' ? 0 : Number(e.target.value) })}
             />
           </div>
           <div className="space-y-2">
@@ -1106,9 +1107,9 @@ function CalculatorPage({ profile, setProfile, generatePlan, isGenerating, setAc
             <input
               type="number"
               className="w-full bg-gray-100 rounded-xl p-3 text-sm font-bold outline-none focus:ring-2 focus:ring-emerald-500/20"
-              value={tempProfile.height}
+              value={tempProfile.height || ''}
               onFocus={(e) => e.target.select()}
-              onChange={(e) => setTempProfile({ ...tempProfile, height: Number(e.target.value) })}
+              onChange={(e) => setTempProfile({ ...tempProfile, height: e.target.value === '' ? 0 : Number(e.target.value) })}
             />
           </div>
         </div>
