@@ -1,0 +1,13 @@
+version: "3.8"
+services:
+  modelfit:
+    image: 192.168.56.10:8082/modelfit:${TAG}
+    ports:
+      - "3000:80"
+    deploy:
+      replicas: 2
+      update_config:
+        order: start-first
+        parallelism: 1
+      restart_policy:
+        condition: on-failure
