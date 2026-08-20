@@ -1,6 +1,10 @@
 pipeline {
   agent any
 
+  tools {
+    nodejs 'node18'
+  }
+
   environment {
     IMAGE = "192.168.56.10:8082/modelfit"
   }
