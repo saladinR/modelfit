@@ -1,0 +1,10 @@
+replicaCount: 2
+ 
+image:
+  repository: 192.168.56.10:8082/modelfit
+  tag: v1
+ 
+service:
+  port: 80
+  targetPort: 80
+ 
